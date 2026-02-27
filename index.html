@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Factorial Interactive Visualizer</title>
+<title>Case Study 1: Factorial Visualizer</title>
 <style>
 :root{
   --bg:#f8fafc;
@@ -12,240 +12,212 @@
   --soft:#eef2ff;
   --warn:#fff7ed;
   --ok:#dcfce7;
+  --neutral:#f8fafc;
   --text:#1f2937;
   --radius:14px;
   --fs:15px;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto;font-size:var(--fs);color:var(--text);}
-.wrapper{max-width:1100px;margin:40px auto;padding:20px;}
-.visualizer{background:var(--card);border-radius:var(--radius);padding:28px;border:1px solid #e5e7eb;box-shadow:0 10px 40px rgba(0,0,0,0.05);}
+body{margin:0;background:var(--bg);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto;font-size:var(--fs);color:var(--text);} 
+.wrapper{max-width:1100px;margin:40px auto;padding:20px}
+.visualizer{background:var(--card);border-radius:var(--radius);padding:28px;border:1px solid #e5e7eb;box-shadow:0 10px 40px rgba(0,0,0,0.05);} 
 .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
 .header h1{font-size:18px;margin:0;}
-.controls{display:flex;gap:10px;flex-wrap:wrap;}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 button{background:var(--accent);border:none;color:white;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:600;}
-button.secondary{background:white;color:var(--accent);border:1px solid var(--accent);}
+button.secondary{background:white;color:var(--accent);border:1px solid var(--accent);} 
 select{padding:6px 8px;border-radius:8px;border:1px solid #ddd;}
-
-/* ALIGN BOTH PANELS */
 .stage{margin-top:20px;display:flex;gap:30px;align-items:stretch;}
-
-.explanation{
-  flex:1.3;
-  background:var(--soft);
-  padding:22px;
-  border-radius:var(--radius);
-  line-height:1.7;
-  display:flex;
-  flex-direction:column;
-  overflow-y:auto;
-}
-
-.shelf{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  border-radius:var(--radius);
-}
-
-.books{display:flex;gap:8px;margin-top:15px;}
+.explanation{flex:1.3;background:var(--soft);padding:22px;border-radius:var(--radius);line-height:1.7;height:520px;overflow-y:auto;}
+.shelf{flex:1;display:flex;flex-direction:column;height:520px;}
+.books{display:flex;gap:8px;margin-top:15px;flex-wrap:wrap}
 .book{width:55px;height:110px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;}
-.c1{background:#ef4444}
-.c2{background:#f97316}
-.c3{background:#eab308}
-.c4{background:#10b981}
-.c5{background:#06b6d4}
-.c6{background:#6366f1}
+.c1{background:#ef4444}.c2{background:#f97316}.c3{background:#eab308}.c4{background:#10b981}.c5{background:#06b6d4}.c6{background:#6366f1}.c7{background:#8b5cf6}
 .result{margin-top:15px;font-weight:700;}
 .progress{margin-top:8px;font-size:13px;color:#475569;}
 ul{padding-left:20px}
-.box-warn{background:var(--warn);padding:12px;border-radius:10px;margin-top:14px;}
-.box-ok{background:var(--ok);padding:12px;border-radius:10px;margin-top:14px;}
-
-/* PERMUTATION PANEL ALIGNED */
-.permutation-panel{
-  margin-top:20px;
-  display:flex;
-  flex-direction:column;
-}
-.permutation-panel h3{margin:0 0 8px 0;font-size:15px;}
-
-/* FORCE SCROLLABLE LIST WITH FIXED HEIGHT */
-.permutation-list{
-  height:260px;              /* fixed height so it never expands */
-  max-height:260px;
-  overflow-y:auto;           /* vertical scroll */
-  overflow-x:hidden;
-  border:1px solid #e5e7eb;
-  border-radius:10px;
-  padding:10px;
-  background:#f9fafb;
-  font-family:monospace;
-  font-size:14px;
-}
+.box-warn{background:var(--warn);border:1px solid #fed7aa;padding:16px;border-radius:14px;margin-top:14px;}
+.box-ok{background:var(--ok);border:1px solid #bbf7d0;padding:14px;border-radius:12px;margin-top:14px;}
+.box-neutral{background:var(--neutral);border:1px solid #e5e7eb;padding:14px;border-radius:12px;margin-top:14px;}
+.code-box{margin-top:12px;padding:14px;background:#f8fafc;border-radius:10px;}
+.code-box pre{background:#111827;color:#e5e7eb;padding:14px;border-radius:10px;font-size:12px;overflow-x:auto;}
+.permutation-panel{margin-top:20px;display:flex;flex-direction:column;flex:1;min-height:0;}
+.permutation-list{flex:1;overflow-y:auto;border:1px solid #e5e7eb;border-radius:10px;padding:10px;background:#f9fafb;font-family:monospace;font-size:14px;}
 .permutation-item{padding:4px 0;border-bottom:1px solid #eee;}
 .permutation-item:last-child{border-bottom:none;}
 </style>
 </head>
 <body>
 <div class="wrapper">
-  <div class="visualizer">
-    <div class="header">
-      <h1>Case Study 1: Factorial Problem - Counting Arrangements</h1>
-      <div class="controls">
-        <label>n:
-          <select id="nSelect">
-            <option value="5" selected>5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-          </select>
-        </label>
-        <button onclick="nextStep()">Next Step</button>
-        <button class="secondary" onclick="prevStep()">Previous</button>
-        <button class="secondary" onclick="resetAll()">Reset</button>
-      </div>
-    </div>
-
-    <div class="stage">
-      <div class="explanation" id="explanation"></div>
-
-      <div class="shelf">
-        <div style="font-weight:600">Books on Shelf</div>
-        <div class="books" id="books"></div>
-        <div class="result" id="result"></div>
-        <div class="progress" id="progress"></div>
-
-        <div class="permutation-panel">
-          <h3>Generated Permutations (Brute Force)</h3>
-          <div class="permutation-list" id="permutationList"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="visualizer">
+<div class="header">
+<h1>Case Study 1: Factorial Problem - Counting Arrangements</h1>
+<div class="controls">
+n:
+<select id="n">
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+</select>
+<button onclick="nextStep()">Next Step</button>
+<button class="secondary" onclick="prevStep()">Previous</button>
+<button class="secondary" onclick="resetAll()">Reset</button>
+</div>
+</div>
+<div class="stage">
+<div class="explanation" id="exp"></div>
+<div class="shelf">
+<div style="font-weight:600">Books on Shelf</div>
+<div class="books" id="books"></div>
+<div class="result" id="res"></div>
+<div class="progress" id="prog"></div>
+<div class="permutation-panel">
+<h3>Generated Permutations (Brute Force)</h3>
+<div class="permutation-list" id="list"></div>
+</div>
+</div>
+</div>
+</div>
 </div>
 
 <script>
-let step = 0;
-let n = 5;
-let permutations = [];
-let permIndex = 0;
+let step=0,idx=0,perms=[];
+const exp=document.getElementById('exp');
+const books=document.getElementById('books');
+const res=document.getElementById('res');
+const prog=document.getElementById('prog');
+const list=document.getElementById('list');
 
-const explanation = document.getElementById('explanation');
-const booksDiv = document.getElementById('books');
-const resultDiv = document.getElementById('result');
-const progressDiv = document.getElementById('progress');
-const permutationList = document.getElementById('permutationList');
-const nSelect = document.getElementById('nSelect');
+document.getElementById('n').addEventListener('change',resetAll);
 
-nSelect.addEventListener('change', ()=>{ n=parseInt(nSelect.value); resetAll(); });
+function seed(){
+books.innerHTML='';
+let n=parseInt(document.getElementById('n').value);
+for(let i=0;i<n;i++){
+let b=document.createElement('div');
+b.className='book c'+((i%7)+1);
+b.textContent=String.fromCharCode(65+i);
+books.appendChild(b);
+}
+}
 
-function seedBooks(){ booksDiv.innerHTML=''; for(let i=0;i<n;i++){ const b=document.createElement('div'); b.className='book c'+((i%6)+1); b.textContent=String.fromCharCode(65+i); booksDiv.appendChild(b);} }
-function factorial(num){let r=1;for(let i=2;i<=num;i++)r*=i;return r;}
-function generatePermutations(arr){ if(arr.length===1)return[arr]; let res=[]; for(let i=0;i<arr.length;i++){ let rest=[...arr.slice(0,i),...arr.slice(i+1)]; let perms=generatePermutations(rest); perms.forEach(p=>res.push([arr[i],...p])); } return res; }
+function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+
+function generate(arr){
+if(arr.length===1) return [arr];
+let result=[];
+for(let i=0;i<arr.length;i++){
+let rest=[...arr.slice(0,i),...arr.slice(i+1)];
+generate(rest).forEach(p=>result.push([arr[i],...p]));
+}
+return result;
+}
 
 function nextStep(){step++;render();}
 function prevStep(){if(step>0){step--;render();}}
 
 function render(){
+let n=parseInt(document.getElementById('n').value);
+exp.scrollTop=0;
+
 if(step===0){
-explanation.innerHTML=`
-<h2>Problem</h2>
-<p>Calculate the number of ways to arrange n distinct items in a line.</p>
-<div class="box-warn">
-<strong>Real-World Scenario:</strong><br><br>
-You have 5 books on a shelf and you want to count exactly how many different ways you can arrange them. This is not theoretical. A library needs to know if there are 120 ways or 100 ways before deciding on a storage system.
-</div>
-`;
+exp.innerHTML=`
+<h2>Case Study 1: Factorial Problem - Counting Arrangements</h2>
+<p>Problem: Calculate the number of ways to arrange n distinct items in a line.</p>
+<div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:14px;padding:16px;margin-top:12px;">
+<p style="margin-top:0;font-weight:600">Real-World Scenario:</p>
+<p style="margin-bottom:0">You have 5 books on a shelf and you want to count exactly how many different ways you can arrange them. This is not theoretical. A library needs to know if there are 120 ways or 100 ways before deciding on a storage system.</p>
+</div>`;
 }
 
 else if(step===1){
-explanation.innerHTML=`
-<h2>The Brute Force Approach: Generate and Count Everything</h2>
-<p>Here is what most people think when they first encounter this problem: "I will generate every single possible arrangement of the 5 books and count them."</p>
+exp.innerHTML=`
+<h3>The Brute Force Approach: Generate and Count Everything</h3>
+<p>Here is what most people think when they first encounter this problem: "I will generate every single possible arrangement of the 5 books and count them." This seems reasonable for 5 books, but let us think about what is actually happening.</p>
 <p>The brute force approach works like this: Start with one arrangement. Generate the next arrangement by swapping elements. Keep doing this until you have generated all possible arrangements. Count them all.</p>
-<p>The fundamental limitation of this approach is that you must physically generate each arrangement in memory.</p>
-`;
+<p>The fundamental limitation of this approach is that you must physically generate each arrangement in memory. For 5 books, this might seem fine. But consider what happens as n grows:</p>
+<div class="box-warn">
+<p style="margin-top:0;font-weight:600">Why Brute Force Becomes Impossible:</p>
+<ul>
+<li>For 5 books: You generate 120 arrangements. Your computer handles this easily in milliseconds.</li>
+<li>For 10 books: You generate 3,628,800 arrangements. Now you are using significant memory and time.</li>
+<li>For 13 books: You generate 6.2 billion arrangements. This crashes most systems.</li>
+<li>For 20 books: You generate 2.4 quintillion arrangements. This is physically impossible to compute.</li>
+</ul>
+</div>
+<p>The problem is not just computation speed. The problem is that the number of arrangements grows factorially. Each additional book multiplies the count by one more number. For 20 books, you would need to process 20! arrangements, which is incomprehensibly large.</p>
+<div class="box-neutral">
+<p style="margin-top:0;font-weight:600">Brute Force Complexity Analysis:</p>
+<ul>
+<li><strong>Time Complexity:</strong> O(n! × n) because you generate n! permutations and process each one in O(n) time.</li>
+<li><strong>Space Complexity:</strong> O(n) to store the array, but effectively much more due to system overhead generating permutations.</li>
+<li><strong>The Real Problem:</strong> The exponential nature means adding just 3 more items multiplies your work by 3 × 4 × 5 = 60 times!</li>
+</ul>
+</div>`;
 }
 
 else if(step===2){
-explanation.innerHTML=`
-<h2>Why Brute Force Becomes Impossible</h2>
-<div class="box-warn">
+exp.innerHTML=`
+<h3>The Combinatorics Approach: Think Mathematically</h3>
+<p>Now here is where mathematics saves us. Instead of generating arrangements, we ask a smarter question: "How many arrangements are there by logical counting?"</p>
+<p>Think about filling the shelf positions one by one:</p>
 <ul>
-<li>For 5 books: You generate 120 arrangements.</li>
-<li>For 10 books: You generate 3,628,800 arrangements.</li>
-<li>For 13 books: You generate 6.2 billion arrangements.</li>
-<li>For 20 books: You generate 2.4 quintillion arrangements.</li>
+<li>For the first shelf position, you have ${n} choices.</li>
+<li>For the second position, you have ${n-1} choices.</li>
+<li>For the third position, you have ${n-2} choices.</li>
+<li>Continue until only 1 choice remains.</li>
 </ul>
-</div>
-<p>The problem is not just computation speed. The number of arrangements grows factorially. Each additional book multiplies the count by one more number.</p>
-<p>Time Complexity: O(n! × n)</p>
-<p>Space Complexity: O(n)</p>
-`;
+<p>By the multiplication principle, the total number of arrangements is simply:</p>
+<p style="font-family:monospace;background:#f0f0f0;padding:10px;border-radius:6px;text-align:center;font-weight:600">${n} × ${n-1} × ${n-2} × ... × 1 = ${n}! = ${factorial(n)}</p>
+<p>We arrive at the same answer, but we did not generate a single arrangement. We calculated it directly using mathematical logic. This is the power of combinatorics.</p>
+<div class="box-ok">
+<p style="margin-top:0;font-weight:600">Combinatorics Complexity Analysis:</p>
+<ul>
+<li><strong>Time Complexity:</strong> O(n) because we simply multiply n numbers together.</li>
+<li><strong>Space Complexity:</strong> O(1) because we only store the result.</li>
+<li><strong>The Real Benefit:</strong> For n=5, brute force does 600 operations. Combinatorics does 4 multiplications. For n=20, brute force is impossible. Combinatorics still does just 19 multiplications!</li>
+</ul>
+</div>`;
+res.textContent=`Result: ${factorial(n)}`;
 }
 
 else if(step===3){
-explanation.innerHTML=`
-<h2>Watch Brute Force in Action (Small n)</h2>
-<p>We now physically generate and count every permutation.</p>
-`;
-permutations=generatePermutations(Array.from({length:n},(_,i)=>String.fromCharCode(65+i)));
-permIndex=0;
-permutationList.innerHTML='';
-showPermutation();
+exp.innerHTML=`
+<h3>Why Combinatorics is Superior</h3>
+<p>The fundamental difference is this: Brute force attempts to solve the problem by actually constructing every solution. Combinatorics solves it by understanding the structure of the problem and counting logically.</p>
+<p>When you have 5 books, the brute force approach creates 120 permutations in your computer's memory. Combinatorics never creates a single arrangement. It just multiplies: 5 × 4 × 3 × 2 × 1. The answer is the same, but the journey is completely different.</p>
+<p>As n grows, this difference becomes the difference between a working solution and an impossible one. Combinatorics scales mathematically. Brute force scales factorially and eventually breaks down entirely.</p>`;
 }
 
 else if(step===4){
-explanation.innerHTML=`
-<h2>The Combinatorics Approach: Think Mathematically</h2>
-<p>Instead of generating arrangements, ask: How many arrangements are there logically?</p>
-<ul>
-<li>First position: ${n} choices</li>
-<li>Second position: ${n-1} choices</li>
-<li>Third position: ${n-2} choices</li>
-<li>Continue until 1 choice remains.</li>
-</ul>
-<p>By multiplication principle:</p>
-<div class="box-ok">
-${n} × ${n-1} × ${n-2} × ... × 1 = ${n}! = ${factorial(n)}
-</div>
-<p>Time Complexity: O(n)</p>
-<p>Space Complexity: O(1)</p>
-`;
-resultDiv.textContent=`Result: ${n}! = ${factorial(n)}`;
-}
-
-else if(step===5){
-explanation.innerHTML=`
-<h2>Why Combinatorics is Superior</h2>
-<p>Brute force attempts to construct every solution.</p>
-<p>Combinatorics solves it by understanding the structure and counting logically.</p>
-<p>As n grows, this becomes the difference between a working solution and an impossible one.</p>
-<div class="box-ok">
-For n=20, brute force is impossible. Combinatorics still performs just 19 multiplications.
-</div>
-`;
+exp.innerHTML=`<h3>Watch Brute Force in Action</h3>`;
+let letters=Array.from({length:n},(_,i)=>String.fromCharCode(65+i));
+perms=generate(letters);
+idx=0;
+list.innerHTML='';
+show();
 }
 }
 
-function showPermutation(){
-if(permIndex>=permutations.length)return;
-let children=booksDiv.children;
-let perm=permutations[permIndex];
-for(let i=0;i<perm.length;i++)children[i].textContent=perm[i];
-progressDiv.textContent=`Permutation ${permIndex+1} / ${permutations.length}`;
-const item=document.createElement('div');
+function show(){
+if(idx>=perms.length) return;
+let children=books.children;
+let p=perms[idx];
+for(let i=0;i<p.length;i++) children[i].textContent=p[i];
+let item=document.createElement('div');
 item.className='permutation-item';
-item.textContent=`${permIndex+1}. ${perm.join(' ')}`;
-permutationList.appendChild(item);
-permutationList.scrollTop=permutationList.scrollHeight;
-permIndex++;
-setTimeout(showPermutation,400);
+item.textContent=p.join(' ');
+list.appendChild(item);
+list.scrollTop=list.scrollHeight;
+prog.textContent=`Permutation ${idx+1} / ${perms.length}`;
+idx++;
+setTimeout(show,200);
 }
 
-function resetAll(){step=0;permIndex=0;permutations=[];resultDiv.textContent='';progressDiv.textContent='';permutationList.innerHTML='';seedBooks();render();}
+function resetAll(){step=0;idx=0;perms=[];res.textContent='';prog.textContent='';list.innerHTML='';seed();render();}
 
-seedBooks();render();
+seed();
+render();
 </script>
 </body>
 </html>
